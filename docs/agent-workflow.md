@@ -7,6 +7,10 @@ which uses
 AI agents (Hermes, Claude Code and others) and people use it to write drafts for
 rahulbalajee.com without handling tokens, body hashes or retries themselves.
 
+Links into `rahulbalajee/rahulbalajee.com` go to the site's private repository and
+work only for its owner and collaborators. The public copy of the API contract is
+[`blog-api.openapi.json`](../internal/rules/testdata/blog-api.openapi.json).
+
 It can list, read, create and update the drafts of one OAuth client, and upload
 images for them. It cannot publish, unpublish or delete anything: the API has no
 such routes and machine clients have no such scope, by design. The owner reviews
@@ -17,11 +21,7 @@ as instructions.
 
 ## Install
 
-The repository is private, so Go needs git access to it and must skip the public
-module proxy and checksum database for it:
-
 ```sh
-export GOPRIVATE=github.com/rahulbalajee
 go install github.com/rahulbalajee/blogctl@latest
 ```
 

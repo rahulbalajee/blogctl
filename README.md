@@ -18,10 +18,7 @@ blogctl --output json posts list                      # JSON for agents
 
 ## Install
 
-The repository is private, so Go needs git access to it:
-
 ```sh
-export GOPRIVATE=github.com/rahulbalajee
 go install github.com/rahulbalajee/blogctl@latest
 ```
 
@@ -36,12 +33,12 @@ images, JSON output, exit codes, retries and quotas.
 
 ## Contract
 
-The site owns the API. Its
-[Blog API](https://github.com/rahulbalajee/rahulbalajee.com/blob/main/docs/api/blog-api.md)
-and [OAuth](https://github.com/rahulbalajee/rahulbalajee.com/blob/main/docs/api/oauth.md)
-documents are authoritative. This repository keeps copies of the OpenAPI document and
-of representative server responses, and its tests fail if the CLI drifts from them;
-`make sync-contract` refreshes the copies from a site checkout.
+The site owns the API, and its documents are authoritative. The site's repository is
+private, so links to its documentation work only for its owner and collaborators. The
+public, machine-readable contract is the copy of its OpenAPI document in
+[`internal/rules/testdata/blog-api.openapi.json`](internal/rules/testdata/blog-api.openapi.json),
+next to copies of representative server responses. The tests fail if the CLI drifts
+from them; `make sync-contract` refreshes the copies from a site checkout.
 
 ## Development
 
