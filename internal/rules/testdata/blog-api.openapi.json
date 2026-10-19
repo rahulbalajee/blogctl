@@ -1,0 +1,1166 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Blog draft and media API",
+    "version": "1.0.0",
+    "description": "Disabled by default; production enables it for a source-IP-restricted launch. CloudFront requires an approved source IP; edge denials can be empty/non-JSON 400 or 403 responses. Own drafts only; no machine publication, deletion or browser-admin access. 30 resource requests/minute and 100 mutation attempts/UTC day per client. Reuse tokens; do not cache secrets or upload forms. GET/HEAD consume request quota. Authorized malformed/failed operations still count. All routes/errors are private/no-store. Refuse redirects and send x-amz-content-sha256 for POST/PUT through CloudFront."
+  },
+  "servers": [
+    {
+      "url": "https://rahulbalajee.com"
+    }
+  ],
+  "paths": {
+    "/api/v1/posts": {
+      "get": {
+        "operationId": "listDrafts",
+        "security": [
+          {
+            "clientCredentials": [
+              "drafts:read"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "description": "Opaque returned cursor; do not decode or construct."
+          }
+        ]
+      },
+      "head": {
+        "operationId": "headDrafts",
+        "security": [
+          {
+            "clientCredentials": [
+              "drafts:read"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 4096
+            },
+            "description": "Opaque returned cursor; do not decode or construct."
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createDraft",
+        "security": [
+          {
+            "clientCredentials": [
+              "drafts:write"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "201": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Draft"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/TooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidContent"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "slug",
+                  "article"
+                ],
+                "properties": {
+                  "slug": {
+                    "type": "string",
+                    "maxLength": 96,
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                  },
+                  "article": {
+                    "$ref": "#/components/schemas/ArticleInput"
+                  }
+                }
+              }
+            }
+          },
+          "description": "100 KiB maximum for posts; 1024 bytes for upload grants. Compute x-amz-content-sha256 from exact bytes. No unknown or duplicate members."
+        }
+      }
+    },
+    "/api/v1/posts/{slug}": {
+      "get": {
+        "operationId": "getDraft",
+        "security": [
+          {
+            "clientCredentials": [
+              "drafts:read"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Draft"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 96,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          }
+        ]
+      },
+      "head": {
+        "operationId": "headDraft",
+        "security": [
+          {
+            "clientCredentials": [
+              "drafts:read"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 96,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "updateDraft",
+        "security": [
+          {
+            "clientCredentials": [
+              "drafts:write"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Draft"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/TooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidContent"
+          }
+        },
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 96,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "revision",
+                  "article"
+                ],
+                "properties": {
+                  "revision": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "article": {
+                    "$ref": "#/components/schemas/ArticleInput"
+                  }
+                }
+              }
+            }
+          },
+          "description": "100 KiB maximum for posts; 1024 bytes for upload grants. Compute x-amz-content-sha256 from exact bytes. No unknown or duplicate members."
+        }
+      }
+    },
+    "/api/v1/media/sign": {
+      "post": {
+        "operationId": "signMediaUpload",
+        "security": [
+          {
+            "clientCredentials": [
+              "media:write"
+            ]
+          }
+        ],
+        "responses": {
+          "400": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          },
+          "200": {
+            "description": "Success",
+            "headers": {
+              "Cache-Control": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "private, no-store"
+              },
+              "Pragma": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "no-cache"
+              },
+              "X-Robots-Tag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "noindex, nofollow"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Upload"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/TooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/UnsupportedMediaType"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidContent"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "slug",
+                  "contentType",
+                  "size"
+                ],
+                "properties": {
+                  "slug": {
+                    "type": "string",
+                    "maxLength": 96,
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                  },
+                  "contentType": {
+                    "type": "string",
+                    "enum": [
+                      "image/png",
+                      "image/jpeg"
+                    ]
+                  },
+                  "size": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 3145728
+                  }
+                }
+              }
+            }
+          },
+          "description": "100 KiB maximum for posts; 1024 bytes for upload grants. Compute x-amz-content-sha256 from exact bytes. No unknown or duplicate members."
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "clientCredentials": {
+        "type": "oauth2",
+        "description": "Token exchange uses client_secret_basic, never cookie authentication. Ten-minute RS256 tokens; no refresh tokens. See oauth.md for token endpoint request/errors.",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://rahulbalajee.com/oauth/token",
+            "scopes": {
+              "drafts:read": "Read/list own drafts",
+              "drafts:write": "Create/update own drafts",
+              "media:write": "Request upload forms for own posts"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ArticleInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "summary", "body"],
+        "properties": {
+          "formatVersion": {
+            "type": "integer",
+            "description": "Optional; the existing service normalizes any integer to 1."
+          },
+          "title": {"$ref": "#/components/schemas/Article/properties/title"},
+          "summary": {"$ref": "#/components/schemas/Article/properties/summary"},
+          "body": {"$ref": "#/components/schemas/Article/properties/body"},
+          "tags": {"$ref": "#/components/schemas/Article/properties/tags"}
+        }
+      },
+      "Article": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "formatVersion",
+          "title",
+          "summary",
+          "body",
+          "tags"
+        ],
+        "properties": {
+          "formatVersion": {
+            "type": "integer",
+            "const": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "Trimmed UTF-8 byte length 3\u2013160."
+          },
+          "summary": {
+            "type": "string",
+            "description": "Trimmed UTF-8 byte length 10\u2013300."
+          },
+          "body": {
+            "type": "string",
+            "description": "HTML, 1\u201381920 bytes before sanitization, nonempty text after sanitization; up to 8 distinct site-owned images with alt text."
+          },
+          "tags": {
+            "type": "array",
+            "maxItems": 5,
+            "items": {
+              "type": "string",
+              "description": "Trimmed UTF-8 byte length 1\u201332."
+            }
+          }
+        }
+      },
+      "Draft": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "slug",
+          "authorName",
+          "draft",
+          "revision",
+          "createdAt",
+          "updatedAt",
+          "hasPublishedSnapshot"
+        ],
+        "properties": {
+          "slug": {
+            "type": "string",
+            "maxLength": 96,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "authorName": {
+            "type": "string"
+          },
+          "draft": {
+            "$ref": "#/components/schemas/Article"
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hasPublishedSnapshot": {
+            "type": "boolean",
+            "description": "Owner-controlled public snapshot exists. API writes change only the draft."
+          }
+        }
+      },
+      "Page": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "posts"
+        ],
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Draft"
+            }
+          },
+          "nextCursor": {
+            "type": "string"
+          }
+        }
+      },
+      "Upload": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url",
+          "fields",
+          "previewUrl"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Short-lived S3 form destination; never send website credentials here."
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "previewUrl": {
+            "type": "string",
+            "description": "Private /api/admin/media/... reference for stored HTML; human browser session required to fetch."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "responses": {
+      "InvalidRequest": {
+        "description": "Malformed input or unsupported authentication transport.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Missing/invalid/expired/revoked token.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          },
+          "WWW-Authenticate": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer challenge set by the application; insufficient_scope includes required scope. Absent through the deployed distribution: the Lambda Function URL renames it to x-amzn-remapped-www-authenticate."
+          },
+          "x-amzn-remapped-www-authenticate": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "The application's Bearer challenge as delivered through CloudFront and the Lambda Function URL. Rely on the status code and JSON error; read this header only as a hint."
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Required scope not granted.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          },
+          "WWW-Authenticate": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bearer challenge set by the application; insufficient_scope includes required scope. Absent through the deployed distribution: the Lambda Function URL renames it to x-amzn-remapped-www-authenticate."
+          },
+          "x-amzn-remapped-www-authenticate": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "The application's Bearer challenge as delivered through CloudFront and the Lambda Function URL. Rely on the status code and JSON error; read this header only as a hint."
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Missing or inaccessible post, unknown route, or API disabled.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "MethodNotAllowed": {
+        "description": "Unsupported method.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          },
+          "Allow": {
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Slug already exists or expected revision is stale.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooLarge": {
+        "description": "Request body exceeds byte limit.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "UnsupportedMediaType": {
+        "description": "JSON content type required.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InvalidContent": {
+        "description": "Article/image validation failed.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Client resource quota exceeded; retry after indicated seconds.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          },
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Seconds until all exhausted applicable quota windows end. Storage or contention failures return 503 instead."
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Unavailable": {
+        "description": "Authorization, quota or operation storage unavailable.",
+        "headers": {
+          "Cache-Control": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "private, no-store"
+          },
+          "Pragma": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "no-cache"
+          },
+          "X-Robots-Tag": {
+            "schema": {
+              "type": "string"
+            },
+            "description": "noindex, nofollow"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

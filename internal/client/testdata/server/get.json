@@ -1,0 +1,26 @@
+{
+  "status": 200,
+  "headers": {
+    "Cache-Control": "private, no-store",
+    "Content-Type": "application/json; charset=utf-8",
+    "Pragma": "no-cache",
+    "X-Robots-Tag": "noindex, nofollow"
+  },
+  "body": {
+    "authorName": "Robot",
+    "createdAt": "<timestamp>",
+    "draft": {
+      "body": "<p>Hello</p>",
+      "formatVersion": 1,
+      "summary": "A summary that pins the wire contract.",
+      "tags": [
+        "go"
+      ],
+      "title": "Golden article"
+    },
+    "hasPublishedSnapshot": false,
+    "revision": 1,
+    "slug": "golden-post",
+    "updatedAt": "<timestamp>"
+  }
+}

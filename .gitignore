@@ -1,0 +1,11 @@
+# Build output
+build/
+
+# Editor and OS noise
+.*.sw?
+.DS_Store
+
+# Never commit credentials
+credentials.json
+.env
+.env.*

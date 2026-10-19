@@ -1,0 +1,12 @@
+{
+  "status": 200,
+  "headers": {
+    "Cache-Control": "private, no-store",
+    "Content-Type": "application/json; charset=utf-8",
+    "Pragma": "no-cache",
+    "X-Robots-Tag": "noindex, nofollow"
+  },
+  "body": {
+    "posts": []
+  }
+}
