@@ -11,7 +11,8 @@ import (
 	"github.com/rahulbalajee/blogctl/internal/cli"
 )
 
-// version is stamped at build time with -X main.version.
+// version is stamped by `make build` with -X main.version; a `go install`
+// build reports its module version instead (see cli.ResolveVersion).
 var version = "dev"
 
 func main() {
@@ -28,7 +29,7 @@ func main() {
 		Stdout:  os.Stdout,
 		Stderr:  os.Stderr,
 		Getenv:  os.Getenv,
-		Version: version,
+		Version: cli.ResolveVersion(version),
 	})
 	stop()
 	os.Exit(code)
