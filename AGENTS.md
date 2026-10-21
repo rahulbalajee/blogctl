@@ -24,7 +24,7 @@ make quality       # CI gate: fmt-check, vet, staticcheck, race tests, vulncheck
 make sync-contract # refresh the site's contract copies (SITE=../rahulbalajee.com)
 ```
 
-Go 1.26.9 is the minimum; CI reads it from `go.mod`. Quality tools are pinned in the
+Go 1.26.10 is the minimum; CI reads it from `go.mod`. Quality tools are pinned in the
 Makefile, not `go.mod`. `fmt-check` only checks tracked files, so stage new Go files
 first.
 
